@@ -36,11 +36,12 @@ async function main() {
     const imageDownload = await fetch(votd.imageUrl);
     const attachment = await masto.v2.mediaAttachments.create({
       file: await imageDownload.blob(),
+      description: votd.verseReference,
     });
 
     await masto.v1.statuses.create({
       mediaIds: [attachment.id],
-      // TODO: status text and tags
+      status: `${votd.verseContent}\n${votd.verseReference}\n\n#Bible #VerseOfTheDay`,
     });
 
     console.log('Success!');
