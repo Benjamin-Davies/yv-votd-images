@@ -12,4 +12,6 @@ async function fetchPage(): Promise<string> {
   return text;
 }
 
-fetchPage();
+fetchPage()
+  // .then(console.log);
+  .then((m) => console.log(/<title>.*?<\/title>/.exec(m)?.[0]));
