@@ -1,49 +1,52 @@
-import fetch from 'node-fetch';
-import { readFile } from 'fs/promises';
+import dotenv from 'dotenv';
+import { login } from 'masto';
+import fetch from 'node-fetch-commonjs';
+import { fetchVotd } from './votd';
 
-const PAGE_URL = 'https://www.bible.com/verse-of-the-day';
+dotenv.config();
 
-interface VotdInfo {
-  imageUrl: string;
-  verseContent: string;
-  verseReference: string;
-}
-
-async function fetchPage(): Promise<string> {
-  // TODO: remove when finished testing
-  return await readFile('example-response.html', 'utf-8');
-
-  const res = await fetch(PAGE_URL);
-  const text = await res.text();
-  return text;
-}
-
-function extractInfo(contents: string): VotdInfo {
-  const imageUrl = contents.match(
-    /https:\/\/s3\.amazonaws\.com\/static-youversionapi-com\/.*?\.jpg/
-  )?.[0];
-  if (!imageUrl) throw new Error('Unable to extract image url');
-
-  const verseWrapper = contents.match(
-    /<div class=\"verse-wrapper.*?\".*?>(.*?)<\/div>/s
-  )?.[1];
-  if (!verseWrapper) throw new Error('Unable to extract verse');
-
-  const [verseContent, verseReference] = [
-    ...verseWrapper.matchAll(/<p.*?>(.*?)<\/p>/gs),
-  ].map((match) => match?.[1]);
-  if (!verseContent) throw new Error('Unable to extract verse content');
-  if (!verseReference) throw new Error('Unable to extract verse reference');
-
-  return { imageUrl, verseContent, verseReference };
+function statusFromToday(status: { createdAt: string }): boolean {
+  // The timestamps are in ISO8601 format, so the first 10 chars contain the date
+  const createdDate = status.createdAt.slice(0, 10);
+  const nowDate = new Date().toISOString().slice(0, 10);
+  return createdDate === nowDate;
 }
 
 async function main() {
-  console.log('Fetching page...');
-  const contents = await fetchPage();
-  console.log('Extracting info...');
-  const info = extractInfo(contents);
-  console.log(info);
+  const masto = await login({
+    url: process.env.URL ?? 'https://botsin.space',
+    accessToken: process.env.TOKEN,
+  });
+
+  const acct = process.env.ACCOUNT;
+  if (!acct) throw new Error('Missing account name');
+  const account = await masto.v1.accounts.lookup({ acct });
+
+  const existingStatuses = await masto.v1.accounts.listStatuses(account.id, {
+    tagged: 'verseoftheday',
+    limit: 1,
+  });
+  if (!existingStatuses.find(statusFromToday)) {
+    console.log('No existing status from today found');
+
+    const votd = await fetchVotd();
+
+    console.log('Posting status...');
+
+    const imageDownload = await fetch(votd.imageUrl);
+    const attachment = await masto.v2.mediaAttachments.create({
+      file: await imageDownload.blob(),
+    });
+
+    await masto.v1.statuses.create({
+      mediaIds: [attachment.id],
+      // TODO: status text and tags
+    });
+
+    console.log('Success!');
+  } else {
+    console.log('Found an existing status from today. Doing nothing');
+  }
 }
 
 main();
