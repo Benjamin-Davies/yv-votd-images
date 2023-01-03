@@ -14,11 +14,11 @@ function statusFromToday(status: { createdAt: string }): boolean {
 
 async function main() {
   const masto = await login({
-    url: process.env.URL ?? 'https://botsin.space',
-    accessToken: process.env.TOKEN,
+    url: process.env['URL'] ?? 'https://botsin.space',
+    accessToken: process.env['TOKEN'],
   });
 
-  const acct = process.env.ACCOUNT;
+  const acct = process.env['ACCOUNT'];
   if (!acct) throw new Error('Missing account name');
   const account = await masto.v1.accounts.lookup({ acct });
 
