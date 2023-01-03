@@ -5,7 +5,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon -x 'node --loader ts-node/esm' ./index.ts"
   },
   "repository": {
     "type": "git",

@@ -12,4 +12,4 @@ async function fetchPage(): Promise<string> {
   return text;
 }
 
-fetchPage().then(console.log);
+fetchPage();
