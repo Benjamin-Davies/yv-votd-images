@@ -17,7 +17,6 @@ async function main() {
   const url = process.env['URL'] ?? 'https://botsin.space';
   const acct = process.env['ACCOUNT'];
   if (!acct) throw new Error('Missing account name');
-  console.log({ accessToken, url, acct });
 
   const masto = await login({ url, accessToken });
 
