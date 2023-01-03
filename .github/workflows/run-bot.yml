@@ -2,14 +2,14 @@ name: Run Bot
 
 on:
   schedule:
-    - cron:  '42 5,17 * * *'
+    - cron: '42 5,17 * * *'
   push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,3 +20,6 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm start
+        env:
+          ACCOUNT: yv_votd_images
+          TOKEN: ${ secrets.TOKEN }
