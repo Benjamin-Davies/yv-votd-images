@@ -1,4 +1,3 @@
-import { readFile } from 'fs/promises';
 import fetch from 'node-fetch-commonjs';
 
 const PAGE_URL = 'https://www.bible.com/verse-of-the-day';
