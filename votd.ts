@@ -10,9 +10,6 @@ interface VotdInfo {
 }
 
 async function fetchPage(): Promise<string> {
-  // TODO: remove when finished testing
-  return await readFile('example-response.html', 'utf-8');
-
   const res = await fetch(PAGE_URL);
   const text = await res.text();
   return text;
