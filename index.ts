@@ -50,4 +50,17 @@ async function main() {
   }
 }
 
-main();
+async function assertImageUrl(expectedUrl?: string) {
+  const info = await fetchVotd();
+  if (info.imageUrl !== expectedUrl) {
+    throw new Error(
+      `Image url differs from expected url: '${info.imageUrl}' !== '${expectedUrl}'`
+    );
+  }
+}
+
+if (process.argv[2] === '--assert-image-url') {
+  assertImageUrl(process.argv[3]);
+} else {
+  main();
+}
