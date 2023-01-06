@@ -1,4 +1,4 @@
-name: Run Bot
+name: Assert Image URL
 
 on:
   schedule:
@@ -16,4 +16,4 @@ jobs:
 
       - run: npm ci
       - run: npm run build
-      - run: npm start -- --assert-image-url https://s3.amazonaws.com/static-youversionapi-com/images/base/81647/1280x1280.jpg
+      - run: npm start -- --assert-image-url https://s3.amazonaws.com/static-youversionapi-com/images/base/86009/1280x1280.jpg
