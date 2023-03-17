@@ -21,7 +21,7 @@ function extractInfo(contents: string): VotdInfo {
   if (!imageUrl) throw new Error('Unable to extract image url');
 
   const verseWrapper = contents.match(
-    /<div class=\"verse-wrapper.*?\".*?>(.*?)<\/div>/s
+    /<div .*?class=\".*?bible-1qbziag.*?\".*?>(.*?)<\/div>/s
   )?.[1];
   if (!verseWrapper) throw new Error('Unable to extract verse');
 
